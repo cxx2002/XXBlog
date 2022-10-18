@@ -19,13 +19,7 @@ public class LoginUser implements UserDetails {
 
     private static final long serialVersionUID = 6885216871258188704L;
     private User user;
-
-
     private List<String> permissions;
-
-    public LoginUser(User user) {
-        this.user = user;
-    }
 
 
     @Override

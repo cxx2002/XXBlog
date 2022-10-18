@@ -1,0 +1,41 @@
+server:
+  port: 8989
+spring:
+  main:
+    allow-circular-references: true # 解决升Spring Boot 2.6后，因循环引用导致启动时报错的问题
+  datasource:
+    url: jdbc:mysql://localhost:3306/xx_blog?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 5MB
+  redis:
+    host: 192.168.223.130 # 本地IP 或是 虚拟机IP
+    port: 6379
+    #    password: root
+    database: 0  # 默认使用 0号db
+  cache:
+    redis:
+      time-to-live: 1800000  # 设置缓存数据的过期时间 30分钟
+
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER  # swagger2和springboot版本不兼容的配置
+
+mybatis-plus:
+  configuration:
+    # 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: delFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: auto
+oss:
+  accessKey: OQ424ogSykvRcCyXCBQW1DIyAAEwPJ5O8uiYf0qy
+  secretKey: RdV6dIKMKQ-qBmzZ1rg2qPvAXt_xvkURtwld6Tql
+  bucket: cxx-xx-blog

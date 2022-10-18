@@ -21,7 +21,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("xx_comment")
-@ApiModel(description = "添加评论实体类")
+@ApiModel(description = "评论实体类")
 public class Comment  {
     @TableId
     private Long id;

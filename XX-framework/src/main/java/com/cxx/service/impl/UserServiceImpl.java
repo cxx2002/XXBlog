@@ -1,22 +1,32 @@
 package com.cxx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cxx.domain.ResponseResult;
 import com.cxx.domain.entity.User;
+import com.cxx.domain.entity.UserRole;
+import com.cxx.domain.vo.PageVo;
 import com.cxx.domain.vo.UserInfoVo;
+import com.cxx.domain.vo.UserVo;
 import com.cxx.enums.AppHttpCodeEnum;
 import com.cxx.exception.SystemException;
 import com.cxx.mapper.UserMapper;
+import com.cxx.service.UserRoleService;
 import com.cxx.service.UserService;
 import com.cxx.utils.BeanCopyUtils;
 import com.cxx.utils.SecurityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author 陈喜喜
@@ -26,25 +36,11 @@ import javax.annotation.Resource;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
-
-    @Override
-    public ResponseResult userInfo() {
-        //获取当前用户id  根据用户id查询用户信息  封装成userInfoVo
-        Long userId = SecurityUtils.getUserId();
-        User user = super.getById(userId);
-        UserInfoVo vo = BeanCopyUtils.copyBean(user, UserInfoVo.class);
-        return ResponseResult.okResult(vo);
-    }
-
-    @Override
-    public ResponseResult updateUserInfo(User user) {
-        //这里最好使用updateWrapper来更新部分字段更为安全
-        super.updateById(user);
-        return ResponseResult.okResult();
-    }
-
     @Resource
     private PasswordEncoder passwordEncoder;
+    @Resource
+    private UserRoleService userRoleService;
+
     @Override
     public ResponseResult registerUser(User user) {
         //对数据进行非空判断以及不重复的判断  对密码进行加密处理  存入数据库
@@ -70,9 +66,98 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         System.out.println(encodePassword1);
         String encodePassword2=new BCryptPasswordEncoder().encode(user.getPassword());//加密
         System.out.println(encodePassword2);
+        //保存加密的密码
         user.setPassword(encodePassword1);
         super.save(user);
+        //往用户-角色表里添加记录，默认为普通角色（写博文）
+        UserRole userRole = new UserRole(user.getId(), 3L);
+        userRoleService.save(userRole);
         return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult selectUserPage(User user, Integer pageNum, Integer pageSize) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+
+        queryWrapper.like(StringUtils.hasText(user.getUserName()),User::getUserName,user.getUserName());
+        queryWrapper.eq(StringUtils.hasText(user.getStatus()),User::getStatus,user.getStatus());
+        queryWrapper.eq(StringUtils.hasText(user.getPhonenumber()),User::getPhonenumber,user.getPhonenumber());
+
+        Page<User> page = new Page<>(pageNum,pageSize);
+
+        page(page,queryWrapper);
+
+        //转换成VO
+        List<User> users = page.getRecords();
+        List<UserVo> userVoList = users.stream()
+                .map(u -> BeanCopyUtils.copyBean(u, UserVo.class))
+                .collect(Collectors.toList());
+
+        return ResponseResult.okResult(new PageVo(userVoList,page.getTotal()));
+    }
+
+    @Override
+    public ResponseResult userInfo() {
+        //获取当前用户id  根据用户id查询用户信息  封装成userInfoVo
+        Long userId = SecurityUtils.getUserId();
+        User user = super.getById(userId);
+        UserInfoVo vo = BeanCopyUtils.copyBean(user, UserInfoVo.class);
+        return ResponseResult.okResult(vo);
+    }
+
+    @Override
+    public ResponseResult updateUserInfo(User user) {
+        //这里最好使用updateWrapper来更新部分字段更为安全
+        super.updateById(user);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(User user) {
+        // 删除用户与角色关联
+        LambdaQueryWrapper<UserRole> userRoleUpdateWrapper = new LambdaQueryWrapper<>();
+        userRoleUpdateWrapper.eq(UserRole::getUserId,user.getId());
+        userRoleService.remove(userRoleUpdateWrapper);
+
+        // 新增用户与角色管理
+        this.insertUserRole(user);
+        // 更新用户信息
+        updateById(user);
+    }
+
+    @Override
+    @Transactional
+    public ResponseResult addUser(User user) {
+        //密码加密处理
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        save(user);
+
+        if(user.getRoleIds()!=null&&user.getRoleIds().length>0){
+            this.insertUserRole(user);
+        }
+        return ResponseResult.okResult();
+    }
+
+    private void insertUserRole(User user) {
+        List<UserRole> userRoles = Arrays.stream(user.getRoleIds())
+                .map(roleId -> new UserRole(user.getId(), roleId)).collect(Collectors.toList());
+        userRoleService.saveBatch(userRoles);
+    }
+
+    @Override
+    public boolean checkUserNameUnique(String userName) {
+        return count(Wrappers.<User>lambdaQuery().eq(User::getUserName,userName))==0;
+    }
+
+    @Override
+    public boolean checkPhoneUnique(User user) {
+        return count(Wrappers.<User>lambdaQuery().eq(User::getPhonenumber,user.getPhonenumber()))==0;
+    }
+
+    @Override
+    public boolean checkEmailUnique(User user) {
+        return count(Wrappers.<User>lambdaQuery().eq(User::getEmail,user.getEmail()))==0;
     }
 
     private boolean nickNameExist(String nickName) {

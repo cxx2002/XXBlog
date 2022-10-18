@@ -14,6 +14,10 @@
 						</el-submenu>
 						<el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item>
 						<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i>友链</el-menu-item>
+						<el-menu-item index="/WriterArticle"><i class="fa fa-wa fa-keyboard-o"></i>
+              写博文
+            </el-menu-item>
+
 
 						<div class="userInfo">
 							<div v-show="!haslogin" class="nologin">

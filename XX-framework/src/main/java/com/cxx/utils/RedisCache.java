@@ -30,6 +30,10 @@ public class RedisCache
     {
         redisTemplate.opsForValue().set(key, value);
     }
+    public <T> void setCacheObject(final String key, final T value, long timeout, TimeUnit timeUnit)
+    {
+        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
+    }
 
     /**
      * 缓存基本的对象，Integer、String、实体类等

@@ -23,6 +23,17 @@ export function hotArticleList() {
     })
 }
 
+//查询最新文章
+export function newArticleList() {
+    return request({
+        url: '/article/newArticleList',
+        headers: {
+          isToken: false
+        },
+        method: 'get'
+    })
+}
+
 //获取文章详情
 export function getArticle(articleId) {
     return request({
@@ -42,5 +53,5 @@ export function updateViewCount(articleId) {
         },
         method: 'put'
     })
-    
+
 }

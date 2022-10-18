@@ -12,11 +12,11 @@
           alt=""
         />
         <h1 v-if="this.$store.state.themeObj.user_start != 0">
-          <span>请别再呼唤我为孤独之人</span>
+          <span>非学无以广才学海无涯</span>
         </h1>
       </div>
       <div class="r1-body">
-        <p>三更</p>
+        <p>嘻嘻</p>
         <div class="catch-me">
           <div class="">
             <el-tooltip class="item" content="Github" placement="top">
@@ -32,15 +32,23 @@
             <el-tooltip
               class="item"
               effect="dark"
+              content="CSDN"
+              placement="top"
+            >
+              <a :href="catchMeObj.csdn" target="_blank"><i class="">C</i></a>
+            </el-tooltip>
+<!--            <el-tooltip
+              class="item"
+              effect="dark"
               content="微博"
               placement="top"
             >
               <a :href="catchMeObj.sina" target="_blank"
                 ><i class="fa fa-fw fa-weibo"></i
               ></a>
-            </el-tooltip>
+            </el-tooltip>-->
           </div>
-          <div class="">
+<!--          <div class="">
             <el-tooltip
               class="item"
               effect="dark"
@@ -48,7 +56,7 @@
               placement="top"
             >
               <a :href="catchMeObj.wechat" target="_blank"
-                ><i class="fa fa-fw fa-wechat"></i
+              ><i class="fa fa-fw fa-wechat"></i
               ></a>
             </el-tooltip>
             <el-tooltip
@@ -59,9 +67,29 @@
             >
               <a :href="catchMeObj.csdn" target="_blank"><i class="">C</i></a>
             </el-tooltip>
-          </div>
+          </div>-->
         </div>
       </div>
+    </section>
+    <section class="rs4">
+      <h2 class="ui label">最新文章</h2>
+      <ul>
+        <li v-for="(item, index) in newArticleList" :key="'newArticleList' + index" >
+          <a :href="'#/DetailArticle?aid=' + item.id" target="_blank">{{
+            item.title
+          }}</a>
+          ——
+          <span v-if="(new Number(Date.now()-new Date(item.createTime))/(60*1000))<60">
+          {{ (Math.ceil(new Number(Date.now()-new Date(item.createTime))/(60*1000))) }} 分钟前
+        </span>
+          <span v-else-if="(new Number(Date.now()-new Date(item.createTime))/(24*60*60*1000))<1">
+          {{ (Math.floor(new Number(Date.now()-new Date(item.createTime))/(60*60*1000))) }} 小时前
+        </span>
+          <span v-if="(new Number(Date.now()-new Date(item.createTime))/(24*60*60*1000))>1">
+          {{ (Math.floor(new Number(Date.now()-new Date(item.createTime))/(24*60*60*1000))) }} 天前
+        </span>
+        </li>
+      </ul>
     </section>
     <section class="rs4">
       <h2 class="ui label">热门文章</h2>
@@ -108,7 +136,7 @@
 
 
 <script>
-import { hotArticleList } from "../api/article";
+import {hotArticleList, newArticleList} from "../api/article";
 export default {
   data() {
     //选项 / 数据
@@ -118,15 +146,17 @@ export default {
       gotoTop: false, //返回顶部
       going: false, //是否正在执行上滑动作
       browseList: "", //热门文章 浏览量最多
+      newArticleList: "", //最新文章
       artCommentList: "", //最新评论
       catchMeObj: {
         //个人信息
-        git: "https://gitee.com",
+        git: "https://github.com/cxx2002",
         qq: "/static/img/qq.png",
         sina: "https://weibo.com",
-        wechat: "/static/img/qq.jpg",
+        wechat: "/static/img/qq.png",
         csdn: "http://www.csdn.cn",
         job: "https://www.baidu.com",
+        writer: "192.168.41.1:81",
       },
     };
   },
@@ -156,6 +186,11 @@ export default {
         this.browseList = response;
       });
     },
+    getNewArticleList() {
+      newArticleList().then((response) => {
+        this.newArticleList = response;
+      });
+    },
   },
   components: {
     //定义组件
@@ -182,6 +217,8 @@ export default {
     };
     //查询浏览量最多的10篇文章数据
     this.getHotArticleList();
+    //查询最近的3篇文章
+    this.getNewArticleList();
 
   },
 };

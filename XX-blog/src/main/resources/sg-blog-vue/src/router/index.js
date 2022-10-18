@@ -67,6 +67,14 @@ export default new Router({
 			},
 			name: 'FriendsLink'
 		}, //友链
+    {
+      path: '/WriterArticle',
+      component: resolve => require(['../pages/WriterArticle.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'WriterArticle'
+    }, //写博文
 
 
 		{

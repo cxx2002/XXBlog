@@ -23,7 +23,7 @@ public class UpdateViewCountJob {
     @Resource
     private ArticleService articleService;
 
-    @Scheduled(cron = "0/55 * * * * ?")
+    @Scheduled(cron = "0 1/5 * * * ?")
     public void updateViewCount(){
         System.out.println("定时更新mysql的浏览量");
         //获取redis中的浏览量  更新到数据库中

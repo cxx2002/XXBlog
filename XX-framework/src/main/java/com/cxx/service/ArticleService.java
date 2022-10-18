@@ -2,7 +2,9 @@ package com.cxx.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cxx.domain.ResponseResult;
+import com.cxx.domain.dto.AddArticleDto;
 import com.cxx.domain.entity.Article;
+import com.cxx.domain.vo.ArticleVo;
 
 /**
  * @author 陈喜喜
@@ -16,5 +18,15 @@ public interface ArticleService extends IService<Article> {
     ResponseResult getArticleDetail(Integer id);
 
     ResponseResult updateViewCount(Long id);
+
+    ResponseResult add(AddArticleDto articleDto);
+
+    ResponseResult selectArticlePage(Integer pageNum, Integer pageSize, Article article);
+
+    ResponseResult getArticleById(Long id);
+
+    ResponseResult edit(ArticleVo articleVo);
+
+    ResponseResult newArticleList();
 
 }

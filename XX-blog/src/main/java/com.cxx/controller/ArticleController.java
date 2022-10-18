@@ -23,6 +23,11 @@ public  class ArticleController {
         //查询热门文章十篇，封装成ResponseResult返回
         return articleService.hotArticleList();
     }
+    @GetMapping("newArticleList")
+    public ResponseResult newArticleList() {
+        //查询最新文章三篇，封装成ResponseResult返回
+        return articleService.newArticleList();
+    }
 
     @GetMapping("articleList")
     public ResponseResult articleList(Integer pageNum,Integer pageSize,Long categoryId) {

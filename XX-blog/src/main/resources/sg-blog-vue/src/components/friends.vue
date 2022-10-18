@@ -2,10 +2,10 @@
 <template>
 <div class="tFriendsBox">
     <h1>友链申请格式
-        <h3>        网站名称: 三更博客</h3>
+        <h3>        网站名称: 百度</h3>
         <h3>网站地址: https://www.baidu.com </h3>
         <h3>网站描述: 百度你懂的</h3>
-        <h3>网站logo: https://www.sg.com/1.png</h3>
+        <h3>网站logo: https://www.baidu.com/1.png</h3>
 
 </h1>
     <el-row>
