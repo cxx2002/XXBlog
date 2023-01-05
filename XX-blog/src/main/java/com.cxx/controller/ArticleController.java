@@ -31,7 +31,7 @@ public  class ArticleController {
 
     @GetMapping("articleList")
     public ResponseResult articleList(Integer pageNum,Integer pageSize,Long categoryId) {
-        //如果是restful风格，则参数要加@PathValue("pageNum")...，或者.../{pageNum}/{}/{}
+        //如果是restful风格，.../{pageNum}/{}/{},则参数要加@PathValue("pageNum")...，
         return articleService.articleList(pageNum, pageSize, categoryId);
     }
 

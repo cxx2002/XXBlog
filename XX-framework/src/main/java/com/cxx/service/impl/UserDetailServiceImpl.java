@@ -38,10 +38,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new RuntimeException("用户不存在");
         }
 
-        //密码进行加密/解密  如果mysql的密码加密了就不用这两行代码
+        //密码进行加密/解密(SHA加密)  如果mysql的密码加密了就不用这两行代码
         // \对admin特殊照顾\因为只有admin用户在mysql的密码没有加密/框架会默认都解密
         if ("admin".equals(username)) {
-            String a = new BCryptPasswordEncoder().encode(user.getPassword());
+            String a = new BCryptPasswordEncoder().encode(user.getPassword());//SHA-256+随机盐+密钥对密码进行加密
             user.setPassword(a);
         }
 

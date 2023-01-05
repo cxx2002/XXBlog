@@ -59,16 +59,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         return ResponseResult.okResult();
     }
 
+
     private List<CommentVo> toCommentVoList(List<Comment> list) {
         //遍历vo列表    【A】回复【B】     通过creatBy查询用户的昵称（写该评论的人）【A】
         // 通过commentUserId查询回复评论的人的昵称（并且rootId！=-1），是直接回复文章的评论（根评论）【B】
         List<CommentVo> commentVos = BeanCopyUtils.copyBeanList(list, CommentVo.class);
         commentVos = commentVos.stream().map(commentVo -> {
             User byId = userService.getById(commentVo.getCreateBy());
-            commentVo.setUsername(byId.getNickName());
+            commentVo.setUsername(byId.getNickName());//获取写该评论的人的昵称
+            commentVo.setAvatar(byId.getAvatar());//获取写该评论的人的头像
             if (commentVo.getRootId() != -1) {
                 User toCommentUser = userService.getById(commentVo.getToCommentUserId());
-                commentVo.setToCommentUserName(toCommentUser.getNickName());
+                commentVo.setToCommentUserName(toCommentUser.getNickName());//获取回复评论的作者的昵称
             }
             return commentVo;
         }).collect(Collectors.toList());

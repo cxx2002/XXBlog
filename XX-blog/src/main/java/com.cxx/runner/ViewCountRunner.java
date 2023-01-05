@@ -22,12 +22,16 @@ public class ViewCountRunner implements CommandLineRunner {
     @Resource
     private RedisCache redisCache;
 
+    //启动时运行的
     @Override
     public void run(String... args) throws Exception {
         //查询该文章信息 id（key） 浏览量（value）     存到redis中
         List<Article> articles = articleMapper.selectList(null);
         Map<String, Integer> viewCountMap = articles.stream().
-                collect(Collectors.toMap(article1 -> article1.getId().toString(), article -> article.getViewCount().intValue()));
+                collect(Collectors.toMap(
+                        article1 -> article1.getId().toString(),
+                        article -> article.getViewCount().intValue()
+                ));
         redisCache.setCacheMap("article:viewCount", viewCountMap);
     }
 }

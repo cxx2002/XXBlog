@@ -13,6 +13,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleListVo {
+    //文章作者
+    private String userName;
 
     private Long id;
     //标题

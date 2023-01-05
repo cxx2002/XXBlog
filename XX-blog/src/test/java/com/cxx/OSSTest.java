@@ -41,13 +41,13 @@ public class OSSTest {
         String bucket = "cxx-xx-blog";*/
 
         //默认不指定key的情况下，以文件内容的hash值作为文件名
-        String key = "private/ly/1";
+        String key = "2022/12/1";
 
         try {
             //byte[] uploadBytes = "hello qiniu cloud".getBytes("utf-8");
             //ByteArrayInputStream byteInputStream=new ByteArrayInputStream(uploadBytes);
 
-            InputStream inputStream = new FileInputStream("C:\\Users\\陈喜喜\\Desktop\\mmexport1632043335901.jpg");
+            InputStream inputStream = new FileInputStream("C:\\Users\\陈喜喜\\Desktop\\10.png");
             Auth auth = Auth.create(accessKey, secretKey);
             String upToken = auth.uploadToken(bucket);
 

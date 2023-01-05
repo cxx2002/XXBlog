@@ -37,6 +37,8 @@ public class Article  {
 
     @TableField(exist = false)
     private String categoryName;
+    @TableField(exist = false)
+    private String userName;//作者
     //缩略图
     private String thumbnail;
     //是否置顶（0否，1是）

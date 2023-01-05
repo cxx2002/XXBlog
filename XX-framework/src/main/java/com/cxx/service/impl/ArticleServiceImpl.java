@@ -9,11 +9,13 @@ import com.cxx.domain.dto.AddArticleDto;
 import com.cxx.domain.entity.Article;
 import com.cxx.domain.entity.ArticleTag;
 import com.cxx.domain.entity.Category;
+import com.cxx.domain.entity.User;
 import com.cxx.domain.vo.*;
 import com.cxx.mapper.ArticleMapper;
 import com.cxx.service.ArticleService;
 import com.cxx.service.ArticleTagService;
 import com.cxx.service.CategoryService;
+import com.cxx.service.UserService;
 import com.cxx.utils.BeanCopyUtils;
 import com.cxx.utils.RedisCache;
 import io.jsonwebtoken.lang.Strings;
@@ -33,6 +35,8 @@ import java.util.stream.Collectors;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Resource
     private CategoryService categoryService;
+    @Resource
+    private UserService userService;
     @Resource
     private RedisCache redisCache;
     @Resource
@@ -67,9 +71,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         super.page(page, queryWrapper);
         //这里articles和page.getRecords()存的是同一个实例，并不是articles重新开辟空间创建了一个新的实例
         List<Article> articles = page.getRecords();
+        //获取文章分类名和作者  这里要注意article.getCreateBy()如果自己直接在mysql添加的文章没有create_by就会报空指针
         articles.forEach(article -> article.setCategoryName(categoryService.getById(article.getCategoryId()).getName()));
-        //articles = articles.stream().map(article -> article.setCategoryName(categoryService.getById(article.getCategoryId()).getName())).collect(Collectors.toList())
-        List<ArticleListVo> rowVo = BeanCopyUtils.copyBeanList(page.getRecords(), ArticleListVo.class);
+        articles.forEach(article -> article.setUserName(userService.getById(article.getCreateBy()).getNickName()));
+        /*articles = articles.stream().map(article -> {
+                article.setCategoryName(categoryService.getById(article.getCategoryId()).getName());
+                return article;
+                }).collect(Collectors.toList());*/
+        List<ArticleListVo> rowVo = BeanCopyUtils.copyBeanList(articles, ArticleListVo.class);
+
         PageVo pageVo = new PageVo(rowVo, page.getTotal());
         //前端要的响应结果是rows（文章信息列表）和total（总记录数），两者是并列的
         return ResponseResult.okResult(pageVo);
@@ -87,13 +97,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (category != null) {
             vo.setCategoryName(category.getName());
         }
+        //根据文章的createBy获取文章作者昵称
+        User author = userService.getById(article.getCreateBy());
+        if (author != null) {
+            vo.setUserName(author.getNickName());
+        }
         return ResponseResult.okResult(vo);
     }
 
     @Override
     public ResponseResult updateViewCount(Long id) {
         //更新redis对应文章id的浏览量
-        redisCache.incrementCacheMapValue("article:viewCount", id.toString(),1);
+        redisCache.incrementCacheMapValue("article:viewCount", id.toString(),1);//加1
         return ResponseResult.okResult();
     }
 
