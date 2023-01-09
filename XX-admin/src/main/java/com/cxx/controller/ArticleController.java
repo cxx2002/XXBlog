@@ -31,6 +31,7 @@ public class ArticleController {
 
     @GetMapping("{id}")
     public ResponseResult getArticleById(@PathVariable Long id){
+        System.out.println("id="+id);
         return articleService.getArticleById(id);
     }
 

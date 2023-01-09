@@ -27,8 +27,13 @@ import java.util.List;
 public class CategoryController {
     @Resource
     private CategoryService categoryService;
+
     //导出excel   Security框架权限验证
-    @PreAuthorize("@ps.hasPermission('content:category:export')")
+    @PreAuthorize("@ps.hasPermission('content:category:export')")  // 这里用自己写的权限匹配方法
+    //嘻嘻博客权限是直接丢给前端vue组件路由来实现权限控制（直接不展示相应的前端组件）
+    //但是可以通过postman，用一个普通用户登录拿到服务端返回的token，然后放在请求头里就直接绕过了前端直接拿到数据以及修改数据
+    //这里表示没有content:category:export权限信息就不能执行这个api
+    //在每个api上弄上这个注解写上对应的权限就可以防止上面事情发生
     @GetMapping("/export")
     public void export(HttpServletResponse response){
         try {

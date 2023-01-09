@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * @author 陈喜喜
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)  //除去json数据中的空值
 public class ResponseResult<T> implements Serializable {
     private static final long serialVersionUID = -5498921292532543924L;
     private Integer code;

@@ -19,7 +19,7 @@ public class LoginUser implements UserDetails {
 
     private static final long serialVersionUID = 6885216871258188704L;
     private User user;
-    private List<String> permissions;
+    private List<String> permissions;  //权限信息
 
 
     @Override

@@ -15,5 +15,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class BlogAdminApplication {
     public static void main(String[] args) {
         SpringApplication.run(BlogAdminApplication.class,args);
+        System.out.println("k");
     }
 }

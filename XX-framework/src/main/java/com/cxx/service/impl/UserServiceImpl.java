@@ -62,7 +62,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if(nickNameExist(user.getNickName())){
             throw new SystemException(AppHttpCodeEnum.NICKNAME_EXIST);
         }
-        String encodePassword1 = passwordEncoder.encode(user.getPassword());
+        //两种加密方式是一样的，接口和实现类的关系
+        //因为在SecurityConfig有配置，如下
+        // @Bean
+        //    public PasswordEncoder passwordEncoder(){
+        //        return new BCryptPasswordEncoder();
+        //    }
+        //spring security中的BCryptPasswordEncoder方法采用SHA-256 +随机盐+密钥对密码进行加密
+        //SHA系列是Hash算法，不是加密算法，使用加密算法意味着可以解密（这个与编码/解码一样），但是采用Hash处理，其过程是不可逆的
+        //加密(encode)：注册用户时，使用SHA-256+随机盐+密钥把用户输入的密码进行hash处理，得到密码的hash值，然后将其存入数据库中
+        //密码匹配(matches)：用户登录时，密码匹配阶段并没有进行密码解密（因为密码经过Hash处理，是不可逆的），而是使用相同的算法把
+        //用户输入的密码进行hash处理,得到密码的hash值,然后将其与从数据库中查到的密码hash值进行比较.如果两者相同,用户输入的密码正确
+        String encodePassword1 = passwordEncoder.encode(user.getPassword());//加密
         System.out.println(encodePassword1);
         String encodePassword2=new BCryptPasswordEncoder().encode(user.getPassword());//加密
         System.out.println(encodePassword2);
