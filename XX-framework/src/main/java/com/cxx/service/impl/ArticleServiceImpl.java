@@ -61,6 +61,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
+    //新添功能（显示作者）空指针异常解决（注释掉77行）
     public ResponseResult articleList(Integer pageNum, Integer pageSize, Long categoryId) {
         //categoryId非空的eq条件  状态是正式发布的  对isTop降序排序（置顶） 分页查询 查询分类名称 封装成vo
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();

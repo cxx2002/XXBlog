@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/xx_blog?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
-    password: 123456
+    password: 123456 #my88816888Wmm
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -39,6 +39,6 @@ mybatis-plus:
 
 
 oss:
-  accessKey: OQ424ogSykvRcCyXCBQW1DIyAAEwPJ5O8uiYf0qy
-  secretKey: RdV6dIKMKQ-qBmzZ1rg2qPvAXt_xvkURtwld6Tql
-  bucket: cxx-xx-blog
+  accessKey: OQ424ogSykvRcCyXCBQW1DIyAAEwPJ5O8uiYf0qy #LTAI5tAmFbK74T6Q4tcz6wEr
+  secretKey: RdV6dIKMKQ-qBmzZ1rg2qPvAXt_xvkURtwld6Tql #8m1V4c0kZu50MrLQdI4p8BgcAR7Fsf
+  bucket: cxx-xx-blog #hhgc
